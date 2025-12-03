@@ -28,11 +28,11 @@
 
 
 data_type = {'l_tr','l_cv','l_tt', 'p_tr', 'p_cv', 'p_tt'};
-lombardgrid_root = 'YOUR_PATH/LombardGRID2mix_Scripts/data_and_mixing_instructions/'; 
+lombardgrid_root = './data_and_mixing_instructions/'; 
 curr = pwd;
 
-output_dir16k='YOUR_OUTPUT_PATH/lombardgrid_2_speakers/wav16k';
-output_dir8k= 'YOUR_OUTPUT_PATH/lombardgrid_2_speakers/wav8k';
+%output_dir16k='YOUR_OUTPUT_PATH/lombardgrid_2_speakers/wav16k';
+output_dir8k= './lombardgrid_2_speakers/wav8k';
 
 min_max = {'min'};
 
@@ -44,18 +44,18 @@ end
 
 for i_mm = 1:length(min_max)
     for i_type = 1:length(data_type)
-        if ~exist([output_dir16k '/' min_max{i_mm} '/' data_type{i_type}],'dir')
-            mkdir([output_dir16k '/' min_max{i_mm} '/' data_type{i_type}]);
-        end
+        %if ~exist([output_dir16k '/' min_max{i_mm} '/' data_type{i_type}],'dir')
+            %mkdir([output_dir16k '/' min_max{i_mm} '/' data_type{i_type}]);
+        %end
         if ~exist([output_dir8k '/' min_max{i_mm} '/' data_type{i_type}],'dir')
             mkdir([output_dir8k '/' min_max{i_mm} '/' data_type{i_type}]);
         end
         status = mkdir([output_dir8k  '/' min_max{i_mm} '/' data_type{i_type} '/s1/']); %#ok<NASGU>
         status = mkdir([output_dir8k  '/' min_max{i_mm} '/' data_type{i_type} '/s2/']); %#ok<NASGU>
         status = mkdir([output_dir8k  '/' min_max{i_mm} '/' data_type{i_type} '/mix/']); %#ok<NASGU>
-        status = mkdir([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s1/']); %#ok<NASGU>
-        status = mkdir([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s2/']); %#ok<NASGU>
-        status = mkdir([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/mix/']);
+        %status = mkdir([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s1/']); %#ok<NASGU>
+        %status = mkdir([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s2/']); %#ok<NASGU>
+        %status = mkdir([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/mix/']);
                 
         TaskFile = [lombardgrid_root '/' 'mix_' data_type{i_type} '.txt'];
         fid=fopen(TaskFile,'r');
@@ -72,9 +72,9 @@ for i_mm = 1:length(min_max)
         num_files = length(C{1});
         fs8k=8000;
         
-        scaling_16k = zeros(num_files,2);
+        %scaling_16k = zeros(num_files,2);
         scaling_8k = zeros(num_files,2);
-        scaling16bit_16k = zeros(num_files,1);
+        %scaling16bit_16k = zeros(num_files,1);
         scaling16bit_8k = zeros(num_files,1);
         fprintf(1,'%s\n',[min_max{i_mm} '_' data_type{i_type}]);
         for i = 1:num_files
@@ -126,6 +126,7 @@ for i_mm = 1:length(min_max)
             s2_8k = mix_scaling_8k * s2_8k;
             mix_8k = mix_scaling_8k * mix_8k;
             
+            %{
             % apply same gain to 16 kHz file
             s1_16k = weight_1 * s1 / sqrt(lev1);
             s2_16k = weight_2 * s2 / sqrt(lev2);
@@ -158,27 +159,27 @@ for i_mm = 1:length(min_max)
             
             scaling16bit_16k(i) = mix_scaling_16k;
             scaling16bit_8k(i)  = mix_scaling_8k;
-            
+            %}
             if useaudioread                          
                 s1_8k = int16(round((2^15)*s1_8k));
                 s2_8k = int16(round((2^15)*s2_8k));
                 mix_8k = int16(round((2^15)*mix_8k));
-                s1_16k = int16(round((2^15)*s1_16k));
-                s2_16k = int16(round((2^15)*s2_16k));
-                mix_16k = int16(round((2^15)*mix_16k));
+                %s1_16k = int16(round((2^15)*s1_16k));
+                %s2_16k = int16(round((2^15)*s2_16k));
+                %mix_16k = int16(round((2^15)*mix_16k));
                 audiowrite([output_dir8k '/' min_max{i_mm} '/' data_type{i_type} '/s1/' mix_name '.wav'],s1_8k,fs8k);
-                audiowrite([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s1/' mix_name '.wav'],s1_16k,fs);
+                %audiowrite([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s1/' mix_name '.wav'],s1_16k,fs);
                 audiowrite([output_dir8k '/' min_max{i_mm} '/' data_type{i_type} '/s2/' mix_name '.wav'],s2_8k,fs8k);
-                audiowrite([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s2/' mix_name '.wav'],s2_16k,fs);
+                %audiowrite([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s2/' mix_name '.wav'],s2_16k,fs);
                 audiowrite([output_dir8k '/' min_max{i_mm} '/' data_type{i_type} '/mix/' mix_name '.wav'],mix_8k,fs8k);
-                audiowrite([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/mix/' mix_name '.wav'],mix_16k,fs);
+                %audiowrite([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/mix/' mix_name '.wav'],mix_16k,fs);
             else
                 wavwrite(s1_8k,fs8k,[output_dir8k '/' min_max{i_mm} '/' data_type{i_type} '/s1/' mix_name '.wav']); %#ok<*DWVWR>
-                wavwrite(s1_16k,fs,[output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s1/' mix_name '.wav']);
+                %wavwrite(s1_16k,fs,[output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s1/' mix_name '.wav']);
                 wavwrite(s2_8k,fs8k,[output_dir8k '/' min_max{i_mm} '/' data_type{i_type} '/s2/' mix_name '.wav']);
-                wavwrite(s2_16k,fs,[output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s2/' mix_name '.wav']);
+                %wavwrite(s2_16k,fs,[output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/s2/' mix_name '.wav']);
                 wavwrite(mix_8k,fs8k,[output_dir8k '/' min_max{i_mm} '/' data_type{i_type} '/mix/' mix_name '.wav']);
-                wavwrite(mix_16k,fs,[output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/mix/' mix_name '.wav']);
+                %wavwrite(mix_16k,fs,[output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/mix/' mix_name '.wav']);
             end
             
             if mod(i,10)==0
@@ -190,7 +191,7 @@ for i_mm = 1:length(min_max)
             
         end
         save([output_dir8k  '/' min_max{i_mm} '/' data_type{i_type} '/scaling.mat'],'scaling_8k','scaling16bit_8k');
-        save([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/scaling.mat'],'scaling_16k','scaling16bit_16k');
+        %save([output_dir16k '/' min_max{i_mm} '/' data_type{i_type} '/scaling.mat'],'scaling_16k','scaling16bit_16k');
         
         fclose(fid);
         fclose(fid_s1);
