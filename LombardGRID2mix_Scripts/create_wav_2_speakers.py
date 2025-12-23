@@ -170,7 +170,7 @@ for minmax in MIN_MAX:
             # expected format: <path1> <snr1> <path2> <snr2>
             parts = line.split()
             if len(parts) < 4:
-                print(f"Skipping malformed line ({i+1}): {line}")
+                print(f"Skipping malformed line ({i + 1}): {line}")
                 continue
             relpath1, snr1_str, relpath2, snr2_str = parts[0], parts[1], parts[2], parts[3]
             snr1 = float(snr1_str)
@@ -179,16 +179,26 @@ for minmax in MIN_MAX:
             # names
             invwav1_name = os.path.splitext(os.path.basename(relpath1))[0]
             invwav2_name = os.path.splitext(os.path.basename(relpath2))[0]
-            mix_name = f"{invwav1_name}_{int(snr1)}_{invwav2_name}_{int(snr2)}"
+            mix_name = f"{invwav1_name}_{snr1}_{invwav2_name}_{snr2}"
 
             source1_list.append(relpath1)
             source2_list.append(relpath2)
             mix_list.append(mix_name)
 
+            #Пропускаем, если выходные файлы уже есть
+            out_s1 = os.path.join(out_dir_for_type, 's1', mix_name + '.wav')
+            out_s2 = os.path.join(out_dir_for_type, 's2', mix_name + '.wav')
+            out_mix = os.path.join(out_dir_for_type, 'mix', mix_name + '.wav')
+
+            # пропускаем только если все три файла уже существуют
+            if os.path.exists(out_s1) and os.path.exists(out_s2) and os.path.exists(out_mix):
+                print(f"Skipping {mix_name} (already exists).")
+                continue
+
             path1 = os.path.join(LOMBARDGRID_ROOT, relpath1)
             path2 = os.path.join(LOMBARDGRID_ROOT, relpath2)
             if not os.path.exists(path1) or not os.path.exists(path2):
-                print(f"File missing for line {i+1}: {path1} or {path2} -- skipping")
+                print(f"File missing for line {i + 1}: {path1} or {path2} -- skipping")
                 continue
 
             s1, fs1 = read_wav_mono(path1)
