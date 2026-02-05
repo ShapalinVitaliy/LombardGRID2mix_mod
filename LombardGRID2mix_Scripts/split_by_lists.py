@@ -94,11 +94,11 @@ def infer_subset_from_name(name: str):
 def main():
     parser = argparse.ArgumentParser(description="Split LombardGRID lists into Plain/Lombard train/val/test folders.")
     parser.add_argument("--lists-dir", help="Путь к папке с list-файлами (напр. Lombardgrid/)",
-                        default=".\data_and_mixing_instructions\Lombardgrid")
+                        default="./data_and_mixing_instructions/Lombardgrid")
     parser.add_argument("--src-audio", help="Корень с wav-файлами Lombard GRID",
-                        default=".\lombardgrid_audio\lombardgrid\\audio")
+                        default="./lombardgrid/audio")
     parser.add_argument("--out-root", help="Куда поместить структуру <out_root>/{Plain,Lombard,Unknown}/{train,val,test}",
-                        default=".\data_and_mixing_instructions\Lombardgrid")
+                        default="./data_and_mixing_instructions/Lombardgrid")
     parser.add_argument("--overwrite", action="store_true", help="Перезаписывать существующие файлы в выходной структуре",
                         default=True)
     args = parser.parse_args()
